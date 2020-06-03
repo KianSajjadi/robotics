@@ -3,18 +3,18 @@ qMin = -qMax;
 maxAllowedVelocity = 0.6/30; %taken from hanscute recommended maxspeed in the sourcecode
 clf
 robot = HansCute;
-qVelocities = zeros(1, 7);
 q = zeros(1, 7);
 robot.model.animate(q);
 breadTr = transl(0.1, 0.1, 0);
-bread = Bread(46, 60, breadTr);
-bread_h = bread.initBread(
-testAnimate(robot, q, qVelocities, qMax, qMin, maxAllowedVelocity, bread, breadTr)
+bread = Bread(breadTr);
+testAnimate(robot, q, qMax, qMin, maxAllowedVelocity, bread, breadTr)
 
 
 %% Main Function
 %Used to run demonstration
-function testAnimate(robot, q, qVelocities, qMax, qMin, maxAllowedVelocity, bread, breadTr)
+function testAnimate(robot, startQ, qMax, qMin, maxAllowedVelocity, bread, breadTr)
+    qVelocities=zeros(1,7);
+    q=startQ;
 	endEffectorVelocities = transpose([0 0 -0.01 0 0 0]);
    %first location above toast
     endEffectorLocationTr = transl(0.1, 0.1, 0.2) * trotx(pi);
@@ -29,7 +29,7 @@ function testAnimate(robot, q, qVelocities, qMax, qMin, maxAllowedVelocity, brea
 	while true
 		w = JointsTools.getWeightedMatrix(q, qMax, qMin, qVelocities, ones(1,7));
 		j = robot.model.jacob0(q);
-		qVelocities = JointsTools.getJointVelocities(q, j, endEffectorVelocities, w);
+		qVelocities = JointsTools.getJointVelocities(j, endEffectorVelocities, w);
 		clampedQVelocities = clampQVelocities(qVelocities, maxAllowedVelocity);
 		q = q + transpose(clampedQVelocities);
 		robot.model.animate(q);
@@ -46,10 +46,7 @@ function testAnimate(robot, q, qVelocities, qMax, qMin, maxAllowedVelocity, brea
 		if zCoord < zGoal
 			break
 		end
-	end
-	gripperBreadTransform = HomInvert(breadTr);
-	[breadPoints, numPoints] = bread.getBreadPoints();
-	AnimateRobotMovement(qMatrix, robot, numSteps, isHolding, breadPoints, bread, gripperBreadTransform, numPoints);
+    end
 	
 end
 	

@@ -11,15 +11,7 @@ classdef HansCute < handle
     end
     
     methods%% Class for HansCute robot simulation
-function self = HansCute(useGripper)
-    if nargin < 1
-        useGripper = false;
-    end
-    self.useGripper = useGripper;
-    
-%> Define the boundaries of the workspace
-
-% robot = 
+function self = HansCute()
 self.GetHansCuteRobot();
 % robot = 
 self.PlotAndColourRobot();%robot,workspace);

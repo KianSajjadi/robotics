@@ -1,13 +1,9 @@
 classdef JointsTools < handle
     properties
-		qMax = [pi pi pi pi pi pi pi];
-		qMin = [-pi -pi -pi -pi -pi -pi -pi];
-        c = ones(1, 7);
-		jointVelocities;
     end
 
     methods(Static)
-		function jointVelocities = getJointVelocities(q, jacobianMatrix, endEffectorVelocity, weightedMatrix)
+		function jointVelocities = getJointVelocities(jacobianMatrix, endEffectorVelocity, weightedMatrix)
 			jointVelocities = inv(weightedMatrix) * transpose(jacobianMatrix) * (inv(jacobianMatrix * inv(weightedMatrix) * transpose(jacobianMatrix))) * endEffectorVelocity;
 		end
 		
