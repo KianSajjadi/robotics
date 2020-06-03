@@ -4,14 +4,12 @@ q = zeros(1, 7);
 robot.model.animate(q);
 breadTr = transl(0.1, 0.1, 0);
 bread = Bread(breadTr);
-f2bread = transl(0, 0, 0.05) * trotx(pi);
-testAnimate(robot, q, bread, breadTr, f2bread);
-
+testAnimate(robot, q, bread, breadTr)
 
 
 %% Main Function
 %Used to run demonstration
-function testAnimate(robot, startQ, bread, breadTr, f2bread)
+function testAnimate(robot, startQ, bread, breadTr)
     qVelocities = zeros(1,7);
     q = startQ;
    %first location above toast
@@ -24,13 +22,12 @@ function testAnimate(robot, startQ, bread, breadTr, f2bread)
 	q = goalJoints;
 
 	goalTr = breadTr * trotx(pi);
-	
 	qMatrix = robot.getCartesianQMatrix(q, goalTr);
 	robot.animateRobotMovement(qMatrix, robot, isHolding, bread, breadTr);
 	%now robot is holding the bread
 	isHolding = true;
 	q = qMatrix(end, :);
-	endEffectorLocationTr =  
+	endEffectorLocationTr = 
 	goalJoints = robot.model.ikine(endEffectorLocationTr, q, [1 1 1 1 1 1]);
 	qMatrix = robot.getPoseQMatrix(q, goalJoints, numSteps);
 	robot.animateRobotMovement(qMatrix, robot, isHolding, bread, transl(0, 0, 0.05) * trotx(pi));

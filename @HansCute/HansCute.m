@@ -108,6 +108,17 @@ classdef HansCute < handle
 				coords = transl(goalTransform) - transl(currentTransform);
 				coords = transpose(coords);
 				rpy = tr2rpy(goalTransform) - tr2rpy(currentTransform);
+				
+				%make joint take shortest path rather than try to turn 2pi rad
+				if rpy(1) > pi
+					rpy(1) = rpy(1) - 2*pi;
+				end
+				if rpy(2) > pi
+					rpy(2) = rpy(2) - 2*pi;
+				end
+				if rpy(3) > pi
+					rpy(3) = rpy(3) - 2*pi;
+				end
 				endEffectorVelocities = [coords rpy];
 				endEffectorVelocities = transpose(endEffectorVelocities);
 				w = JointsTools.getWeightedMatrix(q, qMax, qMin, qVelocities, ones(1,7));
@@ -121,7 +132,10 @@ classdef HansCute < handle
 				i = i + 1;
 				%stop loop when end effector is in acceptable distance of goal
 				d = distance(currentTransform, goalTransform);
-				if  d(4,4) < 0.005
+				if  d(4,4) < 0.05
+					break
+				end
+				if i > 500
 					break
 				end
 			end
@@ -143,4 +157,6 @@ classdef HansCute < handle
 			endEffectorVelocities = [coords rpy];
 		end
 	end
+	
+
 end
