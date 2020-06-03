@@ -30,7 +30,7 @@ function testAnimate(robot, startQ, bread, breadTr, f2bread)
 	%now robot is holding the bread
 	isHolding = true;
 	q = qMatrix(end, :);
-	endEffectorLocationTr =  
+	endEffectorLocationTr = asd  
 	goalJoints = robot.model.ikine(endEffectorLocationTr, q, [1 1 1 1 1 1]);
 	qMatrix = robot.getPoseQMatrix(q, goalJoints, numSteps);
 	robot.animateRobotMovement(qMatrix, robot, isHolding, bread, transl(0, 0, 0.05) * trotx(pi));
