@@ -75,13 +75,13 @@ classdef HansCute < handle
 		end
 		
 		%% animateRobotMovement
-		function animateRobotMovement(self, qMatrix, robot, isHolding, prop, effToPropTr)
-			numSteps = size(qMatrix);
-			numSteps = numSteps(1);
+		function AnimateRobotMovement(qMatrix, robot, isHolding, prop, effToPropTr)
+			numSteps = size(qMatrix)
+			numSteps = numSteps(1)
 			for i = 1:numSteps
 				animate(robot.model, qMatrix(i,:));
 				if isHolding == true
-					prop.updatePos(robot.model.fkine(qMatrix(i,:)) * effToPropTr);
+					prop.updatePos(robot.model.fkine(qMatrix(i,:))*effToPropTr)
 				end
 				drawnow()
 			end
@@ -98,29 +98,23 @@ classdef HansCute < handle
 		
 		%% getCartesianQMatrix
 		function qMatrix = getCartesianQMatrix(self, startJoints, goalTransform)
-			qMin = self.model.qlim(:, 1)';
-			qMax = self.model.qlim(:, 2)';
+			qMax = robot.model.qlim(:, 1)';
+			qMin = robot.model.qlim(:, 2)';
 			qVelocities = zeros(1, 7); %init velocity is 0
 			q = startJoints;
 			i = 1;
 			while true
 				currentTransform = self.model.fkine(q);
-				coords = transl(goalTransform) - transl(currentTransform);
-				coords = transpose(coords);
-				rpy = tr2rpy(goalTransform) - tr2rpy(currentTransform);
-				endEffectorVelocities = [coords rpy];
-				endEffectorVelocities = transpose(endEffectorVelocities);
+				endEffectorVelocities = getEndEffectorVelocities(currentTransform, goalTransform);
 				w = JointsTools.getWeightedMatrix(q, qMax, qMin, qVelocities, ones(1,7));
-				j = self.model.jacob0(q);
+				j = robot.model.jacob0(q);
 				qVelocities = JointsTools.getJointVelocities(j, endEffectorVelocities, w);
-				maxVelocity = max(qVelocities);
-				x = qVelocities / maxVelocity;
-				clampedQVelocities = x * self.maxAllowedVelocity;
+				clampedQVelocities = clampQVelocities(qVelocities, self.maxAllowedVelocity);
 				q = q + transpose(clampedQVelocities);
-				qMatrix(i, :) = q;
+				qMatrix(i, :) = q
 				i = i + 1;
 				%stop loop when end effector is in acceptable distance of goal
-				d = distance(currentTransform, goalTransform);
+				d = distance(currentTransform, goalTransform)
 				if  d(4,4) < 0.005
 					break
 				end
@@ -138,9 +132,9 @@ classdef HansCute < handle
 		%% getEndEffectorVelocities
 		function endEffectorVelocities = getEndEffectorVelocities(currentTransform, goalTransform)
 			coords = transl(goalTransform) - transl(currentTransform);
-			coords = transpose(coords);
 			rpy = tr2rpy(goalTransform) - tr2rpy(currentTransform);
 			endEffectorVelocities = [coords rpy];
+			endEffectorVelocities = transpose(endEffectorVelocities);
 		end
 	end
 end

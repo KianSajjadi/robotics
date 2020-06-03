@@ -16,7 +16,7 @@ classdef Bread < handle
 			numPoints = size(points);
 			self.numPoints = numPoints(1);
 			self.bread_h = initBread(self, faces, points);
-            self.update_pos(startTr);
+            self.updatePos(startTr);
             drawnow();
         end
 		
@@ -30,7 +30,7 @@ classdef Bread < handle
 			hold off
 		end
 		
-		function update_pos(self, breadTr)
+		function updatePos(self, breadTr)
 			for j=1:self.numPoints
 				self.bread_h.Vertices(j,:)=transl(breadTr*transl(self.points(j,:)))';
 			end
