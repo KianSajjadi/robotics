@@ -26,7 +26,7 @@ classdef Bread < handle
 
 		function bread_h = initBread(self, faces, points)
 			hold on
-			bread_h=trisurf(faces,points(:,1),points(:,2),points(:,3),"LineStyle","none","Facecolor","green");
+			bread_h=trisurf(faces,points(:,1),points(:,2),points(:,3),"LineStyle","none","Facecolor",[198 137 88]/255);
 			hold off
 		end
 		

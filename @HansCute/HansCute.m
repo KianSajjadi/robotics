@@ -132,7 +132,7 @@ classdef HansCute < handle
 				i = i + 1;
 				%stop loop when end effector is in acceptable distance of goal
 				d = distance(currentTransform, goalTransform);
-				if  d(4,4) < 0.05
+				if  d(4,4) < 0.001
 					break
 				end
 				if i > 500
