@@ -6,19 +6,23 @@ breadTr = transl(0.1, 0.1, 0);
 bread = Bread(breadTr);
 bread2EffTr = transl(0, 0, 0.05) * trotx(pi);
 
-toasterTr = transl(0.08,0,0);
-toaster2Slot1Tr = toasterTr*transl(0.01,0,0.02);
+toasterTr = transl(0.15,0,0.02);
+toaster2Slot1Tr = transl(0,0.0126,0.006103);
 
-testAnimate(robot, q, bread, breadTr, bread2EffTr, toasterTr, toaster2Slot1Tr);
+toasterSliderStartTr = toasterTr * transl(-0.02, 0, 0);
+toasterSliderEndTr = toasterSliderStartTr * transl(0, 0, -0.05);
+toasterSlider2EffTr = transl(0, 0, 0) * trotx(pi);
+
+testAnimate(robot, q, bread, breadTr, bread2EffTr, toasterTr, toaster2Slot1Tr, toasterSliderStartTr, toasterSliderEndTr, toasterSlider2EffTr);
 
 
 %% Main Function
 %Used to run demonstration
-function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toaster2Slot1Tr)
+function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toaster2Slot1Tr, toasterSliderStartTr, toasterSliderEndTr, toasterSlider2EffTr)
     qVelocities = zeros(1,7);
     q = startQ;
     eff2BreadTr = HomInvert(bread2EffTr);
-    numSteps = 120;
+    numSteps = 10;
     isHolding = false;
     
     %go to first location above toast
@@ -45,6 +49,16 @@ function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toas
     %slide the bread into the toaster, slot 1
     goalTr = toasterTr * toaster2Slot1Tr * bread2EffTr;
 	q = moveRobotCartesian(robot, goalTr, isHolding, bread, eff2BreadTr, q);
+	
+	%move end effector away from toaster while being toasted
+	isHolding = false;
+	goalTr = toasterTr * toaster2Slot1Tr  * transl(0, 0, 0.15) * bread2EffTr;
+	q = moveRobotJoints(robot, goalTr, isHolding, bread, eff2BreadTr, q, numSteps);
+	
+	%move end effector to depress slider and initilialise toasting
+	isHolding = false;
+	goalTr = toasterSliderStartTr * toasterSliderEndTr * toasterSlider2EffTr;
+	q = moveRobotJoints(robot, goalTr, isHolding, bread, toasterSlider2EffTr, q, numSteps);
 end
 
 
