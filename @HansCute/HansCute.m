@@ -105,11 +105,11 @@ classdef HansCute < handle
 			i = 1;
 			while true
 				currentTransform = self.model.fkine(q);
-                diffTransform = HomInvert(currentTransform) * goalTransform;
+				diffTransform = HomInvert(currentTransform) * goalTransform;
 				coords = transl(goalTransform)-transl(currentTransform);
 				coords = transpose(coords);
 				rpy = tr2rpy(diffTransform);
-                rpy = -rpy; % I do not know why the rpy values need to be negated
+				rpy = -rpy; % I do not know why the rpy values need to be negated
 				endEffectorVelocities = [coords rpy];
 				endEffectorVelocities = transpose(endEffectorVelocities);
 				w = JointsTools.getWeightedMatrix(q, qMax, qMin, qVelocities, ones(1,7));
@@ -123,18 +123,14 @@ classdef HansCute < handle
 				i = i + 1;
 				%stop loop when end effector is in acceptable distance of goal
 				d = distance(currentTransform, goalTransform);
-<<<<<<< HEAD
-				if  d(4,4) < 0.009
-=======
 				if  d(4,4) < 0.005
->>>>>>> 7f206e2e6623ef76764afd8ffc162a88d1723abe
 					break
 				end
 				if i > 500
 					break
-                end
-%                 self.model.animate(q);
-%                 drawnow();
+				end
+				%                 self.model.animate(q);
+				%                 drawnow();
 			end
 		end
 		
@@ -153,5 +149,5 @@ classdef HansCute < handle
 			rpy = tr2rpy(goalTransform) - tr2rpy(currentTransform);
 			endEffectorVelocities = [coords rpy];
 		end
-    end
+	end
 end

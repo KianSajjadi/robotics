@@ -6,35 +6,35 @@ breadTr = transl(0.1, 0.1, 0);
 bread = Bread(breadTr);
 bread2EffTr = transl(0, 0, 0.05) * trotx(pi);
 
-<<<<<<< HEAD
-toasterTr = transl(0.15,0,0.02);
-=======
-toasterTr = transl(0.15,0,0);
->>>>>>> 7f206e2e6623ef76764afd8ffc162a88d1723abe
-toaster2Slot1Tr = transl(0,0.0126,0.006103);
+toasterTr = transl(0.2, 0, 0);
+toaster2Slot1Tr = transl(0, 0.0126, 0.006103);
 
-toasterSliderStartTr = toasterTr * transl(-0.02, 0, 0);
-toasterSliderEndTr = toasterSliderStartTr * transl(0, 0, -0.05);
+toasterSliderStartTr = toasterTr * transl(-0.07, 0.0135, 0.1);
+toasterSliderEndTr = toasterSliderStartTr * transl(0, 0, -0.08);
 toasterSlider2EffTr = transl(0, 0, 0) * trotx(pi);
 
-testAnimate(robot, q, bread, breadTr, bread2EffTr, toasterTr, toaster2Slot1Tr, toasterSliderStartTr, toasterSliderEndTr, toasterSlider2EffTr);
+toasterDialTr = toasterTr * transl(-0.07, -0.0135, 0.1);
+toasterDial2EffTr = transl(0, 0, 0) * trotx(pi);
+
+
+testAnimate(robot, q, bread, breadTr, bread2EffTr, toasterTr, toaster2Slot1Tr, toasterSliderStartTr, toasterSliderEndTr, toasterSlider2EffTr, toasterDialTr, toasterDial2EffTr);
 
 
 %% Main Function
 %Used to run demonstration
-function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toaster2Slot1Tr, toasterSliderStartTr, toasterSliderEndTr, toasterSlider2EffTr)
-    qVelocities = zeros(1,7);
+function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toaster2Slot1Tr, toasterSliderStartTr, toasterSliderEndTr, toasterSlider2EffTr, toasterDialTr, toasterDial2EffTr)
+    qVelocities = zeros(1, 7);
     q = startQ;
     eff2BreadTr = HomInvert(bread2EffTr);
     numSteps = 10;
     isHolding = false;
     
     hold on
-    toaster_h=createProp("toaster.ply",toasterTr,[1 1 1])
+    toaster_h = createProp("toaster.ply",toasterTr,[1 1 1]);
     hold off
     
     %go to first location above toast
-    goalTr = breadTr * transl(0,0,0.1) * bread2EffTr; % location 100mm above bread grabbing point
+    goalTr = breadTr * transl(0, 0, 0.1) * bread2EffTr; % location 100mm above bread grabbing point
 	q = moveRobotJoints(robot, goalTr, isHolding, bread, eff2BreadTr, q, numSteps);
 
     %descend in a straight line onto bread
@@ -45,13 +45,13 @@ function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toas
 	isHolding = true;
 
     %lift bread up 100mm
-	goalTr = breadTr * transl(0,0,0.08) * bread2EffTr;
+	goalTr = breadTr * transl(0, 0, 0.08) * bread2EffTr;
 	q = moveRobotJoints(robot, goalTr, isHolding, bread, eff2BreadTr, q, numSteps);
     
 	%lift bread to above the toaster
     % when end effector is at the following location, bread will be 15cm
     % above slot 1
-    goalTr = toasterTr * toaster2Slot1Tr * transl(0,0,0.2) * bread2EffTr ;
+    goalTr = toasterTr * toaster2Slot1Tr * transl(0, 0, 0.2) * bread2EffTr ;
 	q = moveRobotJoints(robot, goalTr, isHolding, bread, eff2BreadTr, q, numSteps);
     
     %slide the bread into the toaster, slot 1
@@ -63,10 +63,31 @@ function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toas
 	goalTr = toasterTr * toaster2Slot1Tr  * transl(0, 0, 0.15) * bread2EffTr;
 	q = moveRobotJoints(robot, goalTr, isHolding, bread, eff2BreadTr, q, numSteps);
 	
-	%move end effector to depress slider and initilialise toasting
+	%move end effector to the dial to adjust darkness of toast
+	goalTr = toasterDialTr * toasterDial2EffTr;
+	q = moveRobotJoints(robot, goalTr, isHolding, bread, toasterDial2EffTr, q, numSteps);
+	
+	%adjust dial to set darkness of toast from user input
+	goalTr = toasterDialTr * toasterDial2EffTr * trotx(0.52);
+	q = moveRobotJoints(robot, goalTr, isHolding, bread, toasterDial2EffTr, q, numSteps);
+
+	%move effector back as to not collide with the dial
+	goalTr = goalTr * transl(-0.01, 0, 0);
+	q = moveRobotJoints(robot, goalTr, isHolding, bread, toasterDial2EffTr, q, numSteps);
+	
+	%move end effector to just above the slider
 	isHolding = false;
-	goalTr = toasterSliderStartTr * toasterSliderEndTr * toasterSlider2EffTr;
+	goalTr = toasterSliderStartTr * toasterSlider2EffTr;
 	q = moveRobotJoints(robot, goalTr, isHolding, bread, toasterSlider2EffTr, q, numSteps);
+	
+	%move end effector straight down to initialise toasting
+	isHolding = false;
+	goalTr = toasterSliderEndTr * toasterSlider2EffTr;
+	q = moveRobotCartesian(robot, goalTr, isHolding, bread, toasterSlider2EffTr, q);
+	
+	%move end effector to above where toast will be
+	
+	
 end
 
 function prop_h = createProp(propName, locationTr, colour)
