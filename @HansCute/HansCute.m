@@ -27,13 +27,13 @@ classdef HansCute < handle
 			pause(0.001);
 			name = ['UR_3_',datestr(now,'yyyymmddTHHMMSSFFF')];
 			%     end
-			L1 = Link('d',0.15,'a',0,'alpha',pi/2,'offset',0,'qlim',[-12.5, 12.5]);
-			L2 = Link('d',0,'a',0,'alpha',-pi/2,'offset',0,'qlim',[-11.8, 11.8]);
-			L3 = Link('d',0.1258,'a',0,'alpha',pi/2,'offset',0,'qlim',[-12.5, 12.5]);
-			L4 = Link('d',0,'a',0.0667,'alpha',-pi/2,'offset',pi/2,'qlim',[-11.8, 11.8]);
-			L5 = Link('d',0,'a',0.0667,'alpha',pi/2,'offset',0,'qlim',[-11.8, 11.8]);
-			L6 = Link('d',0,'a',0,'alpha',pi/2,'offset',pi/2,'qlim',[-11.8 11.8]);
-			L7 = Link('d',0.1517,'a',0,'alpha',0,'offset',0,'qlim',[-12.5 12.5]);
+			L1 = Link('d',0.15,'a',0,'alpha',pi/2,'offset',0,'qlim',[-2.5, 2.5]);
+			L2 = Link('d',0,'a',0,'alpha',-pi/2,'offset',0,'qlim',[-1.8, 1.8]);
+			L3 = Link('d',0.1258,'a',0,'alpha',pi/2,'offset',0,'qlim',[-2.5, 2.5]);
+			L4 = Link('d',0,'a',0.0667,'alpha',-pi/2,'offset',pi/2,'qlim',[-1.8, 1.8]);
+			L5 = Link('d',0,'a',0.0667,'alpha',pi/2,'offset',0,'qlim',[-1.8, 1.8]);
+			L6 = Link('d',0,'a',0,'alpha',pi/2,'offset',pi/2,'qlim',[-1.8 1.8]);
+			L7 = Link('d',0.1517,'a',0,'alpha',0,'offset',0,'qlim',[-2.5 2.5]);
 			
 			self.model = SerialLink([L1 L2 L3 L4 L5 L6 L7],'name',name);
 		end
