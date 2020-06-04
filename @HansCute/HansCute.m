@@ -105,20 +105,11 @@ classdef HansCute < handle
 			i = 1;
 			while true
 				currentTransform = self.model.fkine(q);
-				coords = transl(goalTransform) - transl(currentTransform);
+                diffTransform = HomInvert(currentTransform) * goalTransform;
+				coords = transl(goalTransform)-transl(currentTransform);
 				coords = transpose(coords);
-				rpy = tr2rpy(goalTransform) - tr2rpy(currentTransform);
-				
-				%make joint take shortest path rather than try to turn 2pi rad
-				if rpy(1) > pi
-					rpy(1) = rpy(1) - 2*pi;
-				end
-				if rpy(2) > pi
-					rpy(2) = rpy(2) - 2*pi;
-				end
-				if rpy(3) > pi
-					rpy(3) = rpy(3) - 2*pi;
-				end
+				rpy = tr2rpy(diffTransform);
+                rpy = -rpy; % I do not know why the rpy values need to be negated
 				endEffectorVelocities = [coords rpy];
 				endEffectorVelocities = transpose(endEffectorVelocities);
 				w = JointsTools.getWeightedMatrix(q, qMax, qMin, qVelocities, ones(1,7));
@@ -137,14 +128,14 @@ classdef HansCute < handle
 				end
 				if i > 500
 					break
-				end
+                end
 			end
 		end
 		
 		%% clampedQVelocity
 		%prevent joins from exceeding maxAllowedVelocity
 		function clampedQVelocities = clampQVelocities(qVelocities, maxAllowedVelocity)
-			maxVelocity = max(qVelocities);
+			maxVelocity = max(abs(qVelocities));
 			x = qVelocities / maxVelocity;
 			clampedQVelocities = x * maxAllowedVelocity;
 		end
@@ -156,7 +147,5 @@ classdef HansCute < handle
 			rpy = tr2rpy(goalTransform) - tr2rpy(currentTransform);
 			endEffectorVelocities = [coords rpy];
 		end
-	end
-	
-
+    end
 end
