@@ -112,17 +112,17 @@ classdef HansCute < handle
 				diffTransform = HomInvert(currentTransform) * goalTransform;
 				coords = transl(goalTransform)-transl(currentTransform);
 				coords = transpose(coords);
-				rpy = tr2rpy(diffTransform);
-				rpy = -rpy; % I do not know why the rpy values need to be negated
+                re = t2r(goalTransform)*t2r(currentTransform)';
+                rpy = tr2rpy(r2t(re));
 				endEffectorVelocities = [coords rpy];
 				endEffectorVelocities = transpose(endEffectorVelocities);
 				w = JointsTools.getWeightedMatrix(q, qMax, qMin, qVelocities, ones(1,7));
 				j = self.model.jacob0(q);
 				qVelocities = JointsTools.getJointVelocities(j, endEffectorVelocities, w);
 				maxVelocity = max(qVelocities);
-				x = qVelocities / maxVelocity;
-				clampedQVelocities = x * self.maxAllowedVelocity;
-				q = q + transpose(clampedQVelocities);
+                x = qVelocities / maxVelocity;
+                qVelocities = x * self.maxAllowedVelocity;
+                q = q + transpose(qVelocities);
 				qMatrix(i, :) = q;
 				i = i + 1;
 				%stop loop when end effector is in acceptable distance of goal
@@ -132,9 +132,9 @@ classdef HansCute < handle
 				end
 				if i > 500
 					break
-				end
-				%                 self.model.animate(q);
-				%                 drawnow();
+                end
+%                 self.model.animate(q);
+%                 drawnow();
 			end
 		end
 		
