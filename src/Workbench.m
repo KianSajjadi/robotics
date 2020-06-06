@@ -1,3 +1,4 @@
+
 clf
 robot = HansCute;
 q = zeros(1, 7);
@@ -26,7 +27,7 @@ function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toas
     qVelocities = zeros(1, 7);
     q = startQ;
     eff2BreadTr = HomInvert(bread2EffTr);
-    numSteps = 10;
+    numSteps = 120;
     isHolding = false;
     
     hold on

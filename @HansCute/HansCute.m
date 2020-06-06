@@ -87,6 +87,10 @@ classdef HansCute < handle
 			end
 		end
 		
+		%% stopAnimating
+		function stopAnimating(self, qMatrix, robot, isHolding, prop, effToPropTr)
+			x = 1;
+		end
 		%% getPoseQMatrix
 		function qMatrix = getPoseQMatrix(self, startJoints, goalJoints, numSteps)
 			trapezoid = lspb(0,1,numSteps);
