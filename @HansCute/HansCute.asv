@@ -12,8 +12,9 @@ classdef HansCute < handle
 	end
 	
 	methods%% Class for HansCute robot simulation
-		function self = HansCute()
+		function self = HansCute(gui)
 			self.GetHansCuteRobot();
+
 			% robot =
 			self.PlotAndColourRobot();%robot,workspace);
 		end
@@ -74,12 +75,12 @@ classdef HansCute < handle
 		end
 		
 		%% animateRobotMovement
-		function animateRobotMovement(self, qMatrix, robot, isHolding, prop, effToPropTr, gui)
+		function animateRobotMovement(self, qMatrix, robot, isHolding, prop, effToPropTr)
 			numSteps = size(qMatrix);
 			numSteps = numSteps(1);
 			for i = 1:numSteps
 				drawnow()
-				stop_state = str2double(gui.EMERGENCYSTOPSwitch.Value);
+				stop_state = getappdata(
 				if stop_state == 1
 					break;
 					stopAnimating(q, robot, isHolding, prop, effToPropTr);

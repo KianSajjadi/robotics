@@ -14,7 +14,7 @@ toasterSliderStartTr = toasterTr * transl(-0.07, 0.0135, 0.1);
 toasterSliderEndTr = toasterSliderStartTr * transl(0, 0, -0.08);
 toasterSlider2EffTr = transl(0, 0, 0) * trotx(pi);
 
-toasterDialTr = toasterTr * transl(-0.07, -0.0135, 0.1);
+toasterDialTr = toasterTr * transl(-0.07, -0.0135, 0.01);
 toasterDial2EffTr = transl(0, 0, 0) * trotx(pi);
 
 
@@ -27,7 +27,8 @@ function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toas
     qVelocities = zeros(1, 7);
     q = startQ;
     eff2BreadTr = HomInvert(bread2EffTr);
-    numSteps = 120;
+	eff2ToasterDialTr = HomInvert(toasterDial2EffTr);
+    numSteps = 5;
     isHolding = false;
     
     hold on
@@ -66,15 +67,15 @@ function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toas
 	
 	%move end effector to the dial to adjust darkness of toast
 	goalTr = toasterDialTr * toasterDial2EffTr;
-	q = moveRobotJoints(robot, goalTr, isHolding, bread, toasterDial2EffTr, q, numSteps);
+	q = moveRobotJoints(robot, goalTr, isHolding, bread, eff2ToasterDialTr, q, numSteps);
 	
 	%adjust dial to set darkness of toast from user input
-	goalTr = toasterDialTr * toasterDial2EffTr * trotx(0.52);
-	q = moveRobotJoints(robot, goalTr, isHolding, bread, toasterDial2EffTr, q, numSteps);
+	goalTr = toasterDialTr * toasterDial2EffTr * trotx(0.13);
+	q = moveRobotJoints(robot, goalTr, isHolding, bread, eff2ToasterDialTr, q, numSteps);
 
 	%move effector back as to not collide with the dial
 	goalTr = goalTr * transl(-0.01, 0, 0);
-	q = moveRobotJoints(robot, goalTr, isHolding, bread, toasterDial2EffTr, q, numSteps);
+	q = moveRobotJoints(robot, goalTr, isHolding, bread, eff2ToasterDialTr, q, numSteps);
 	
 	%move end effector to just above the slider
 	isHolding = false;
