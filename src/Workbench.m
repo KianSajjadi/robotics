@@ -3,19 +3,19 @@ clf
 robot = HansCute;
 q = zeros(1, 7);
 
-breadTr = transl(0.1, 0.1, 0);
+breadTr = transl(0.1, 0.1, 0); % absolute
 bread = Bread(breadTr);
-bread2EffTr = transl(0, 0, 0.05) * trotx(pi);
+bread2EffTr = transl(0, 0, 0.05) * trotx(pi); % relative
 
-toasterTr = transl(0.2, 0, 0);
-toaster2Slot1Tr = transl(0, 0.0126, 0.006103);
+toasterTr = transl(0.2, 0, 0); % absolute
+toaster2Slot1Tr = transl(0, 0.0126, 0.006103); % relative
 
-toasterSliderStartTr = toasterTr * transl(-0.07, 0.0135, 0.1);
-toasterSliderEndTr = toasterSliderStartTr * transl(0, 0, -0.08);
-toasterSlider2EffTr = transl(0, 0, 0) * trotx(pi);
+toasterSliderStartTr = toasterTr * transl(-0.07, 0.0135, 0.1); % absolute
+toasterSliderEndTr = toasterSliderStartTr * transl(0, 0, -0.08); % absolute
+toasterSlider2EffTr = transl(0, 0, 0) * trotx(pi); % relative
 
-toasterDialTr = toasterTr * transl(-0.07, -0.0135, 0.01);
-toasterDial2EffTr = transl(0, 0, 0) * trotx(pi);
+toasterDialTr = toasterTr * transl(-0.07, -0.0135, 0.1); % absolute
+toasterDial2EffTr = transl(0, 0, 0) * trotx(pi); % relative
 
 
 testAnimate(robot, q, bread, breadTr, bread2EffTr, toasterTr, toaster2Slot1Tr, toasterSliderStartTr, toasterSliderEndTr, toasterSlider2EffTr, toasterDialTr, toasterDial2EffTr);
@@ -27,8 +27,10 @@ function testAnimate(robot, startQ, bread, breadTr, bread2EffTr, toasterTr, toas
     qVelocities = zeros(1, 7);
     q = startQ;
     eff2BreadTr = HomInvert(bread2EffTr);
+
 	eff2ToasterDialTr = HomInvert(toasterDial2EffTr);
-    numSteps = 5;
+    numSteps = 60;
+
     isHolding = false;
     
     hold on

@@ -42,9 +42,11 @@ classdef Shmerkbench < handle
 			self.toasterDial2EffTr = transl(0, 0, 0) * trotx(pi);
 			self.GUI = GUI;
 		end
+		
+		
  		%% Main Function
 		%Used to run demonstration
-		function testAnimate(self)
+		function testAnimate()
 			clf
 			self = Shmerkbench();
 			qVelocities = zeros(1, 7);
