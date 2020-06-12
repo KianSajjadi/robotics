@@ -17,48 +17,62 @@ classdef Shmerkbench < handle
 		
 		toasterDialTr;
 		toasterDial2EffTr;
+        
+        tableTr;
+        
+        plateTr;
+        plate2BreadTr;
+        
 		GUI;
 	end
 	
 	
-	methods(Static)
+	methods
 		
 		function self = Shmerkbench()
 			self.robot = HansCute();
 			self.q = zeros(1, 7);
 			
-			self.breadTr = transl(0.1, 0.1, 0);
-			self.bread = Bread(self.breadTr);
-			self.bread2EffTr = transl(0, 0, 0.05) * trotx(pi);
+			self.breadTr = transl(0.1, 0.1, 0); % absolute
+			self.bread2EffTr = transl(0, 0, 0.05) * trotx(pi); % relative
 			
-			self.toasterTr = transl(0.2, 0, 0);
-			self.toaster2Slot1Tr = transl(0, 0.0126, 0.008103);
+			self.toasterTr = transl(0.2, 0, 0); % absolute
+			self.toaster2Slot1Tr = transl(0, 0.0126, 0.008103); % relative
 			
-			self.toasterSliderStartTr = self.toasterTr * transl(-0.07, 0.0135, 0.1);
-			self.toasterSliderEndTr = self.toasterSliderStartTr * transl(0, 0, -0.08);
-			self.toasterSlider2EffTr = transl(0, 0, 0) * trotx(pi);
+			self.toasterSliderStartTr = self.toasterTr * transl(-0.07, 0.0135, 0.1); % absolute
+			self.toasterSliderEndTr = self.toasterSliderStartTr * transl(0, 0, -0.08); % absolute
+			self.toasterSlider2EffTr = transl(0, 0, 0) * trotx(pi); % relative
 			
-			self.toasterDialTr = self.toasterTr * transl(-0.07, -0.0135, 0.1);
-			self.toasterDial2EffTr = transl(0, 0, 0) * trotx(pi);
-			self.GUI = GUI;
-		end
-		
-		
+			self.toasterDialTr = self.toasterTr * transl(-0.07, -0.0135, 0.1); % absolute
+			self.toasterDial2EffTr = transl(0, 0, 0) * trotx(pi); % relative
+            
+            self.tableTr = transl(0,0,0); % absolute
+            
+            self.plateTr = transl(0.12,-0.12,0); % absolute
+            self.plate2BreadTr = trotz(pi/2) * transl(0, 0.022265, 0.010481) * trotx(-72.8 * pi/180); % relative
+% 			self.GUI = GUI;
+        end
+        
  		%% Main Function
 		%Used to run demonstration
-		function testAnimate()
+		function testAnimate(self)
 			clf
-			self = Shmerkbench();
+% 			self = Shmerkbench();
 			qVelocities = zeros(1, 7);
 			q = zeros(1, 7);
 			eff2BreadTr = HomInvert(self.bread2EffTr);
 			numSteps = 120;
 			isHolding = false;
+            self.breadTr = self.plateTr * self.plate2BreadTr;
 			hold on
-			toaster_h = createProp("toaster.ply", self.toasterTr, [1 1 1]);
+                bread = Bread(self.breadTr);
+                toaster_h = createProp("toaster.ply", self.toasterTr, [1 1 1]);
+                table_h = createProp("table.ply", self.tableTr, [231 217 198]/255);
+                plate_h = createProp("plate.ply", self.plateTr, [1 1 1]);
 			hold off
 			toast_val = -1.56 + 0.52 * str2double(self.GUI.ToastDarknessKnob.Value);
-			%go to first location above toast
+            
+			%go to first location above bread
 			goalTr = self.breadTr * transl(0, 0, 0.1) * self.bread2EffTr; % location 100mm above bread grabbing point
 			q = moveRobotJoints(self, self.robot, goalTr, isHolding, self.bread, eff2BreadTr, q, numSteps);
 			

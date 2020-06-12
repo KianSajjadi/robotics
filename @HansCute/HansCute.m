@@ -3,7 +3,7 @@ classdef HansCute < handle
 		%> Robot model
 		model;
 		%>
-		workspace = [-0.8 0.8 -0.8 0.8 0 1];
+		workspace = [-0.6 0.6 -0.6 0.6 -0.6 0.6];
 		
 		%> Flag to indicate if gripper is used
 		useGripper = false;
@@ -79,12 +79,12 @@ classdef HansCute < handle
 			numSteps = numSteps(1);
 			for i = 1:numSteps
 				drawnow()
-				stop_state = str2double(gui.EMERGENCYSTOPSwitch.Value);
-				if stop_state == 1
-					break;
-					stopAnimating(q, robot, isHolding, prop, effToPropTr);
-					return;
-				end
+% 				stop_state = str2double(gui.EMERGENCYSTOPSwitch.Value);
+% 				if stop_state == 1
+% 					break;
+% 					stopAnimating(q, robot, isHolding, prop, effToPropTr);
+% 					return;
+% 				end
 				animate(robot.model, qMatrix(i, :));
 				if isHolding == true
 					prop.updatePos(robot.model.fkine(qMatrix(i, :)) * effToPropTr);
@@ -121,6 +121,9 @@ classdef HansCute < handle
 				diffTransform = HomInvert(currentTransform) * goalTransform;
 				coords = transl(goalTransform)-transl(currentTransform);
 				coords = transpose(coords);
+                if max(abs(coords)) > 0.004
+                    coords = coords * 0.004/max(abs(coords))
+                end
                 re = t2r(goalTransform)*t2r(currentTransform)';
                 rpy = tr2rpy(r2t(re));
 				endEffectorVelocities = [coords rpy];
@@ -136,7 +139,7 @@ classdef HansCute < handle
 				i = i + 1;
 				%stop loop when end effector is in acceptable distance of goal
 				d = distance(currentTransform, goalTransform);
-				if  d(4,4) < 0.005
+				if  sum(abs(endEffectorVelocities)) < 0.004
 					break
 				end
 				if i > 500
