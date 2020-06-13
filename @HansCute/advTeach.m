@@ -35,7 +35,7 @@ function advTeach(robot, varargin)
 			qscale(j) = 180/pi;
 		end
 	end
-	
+	handles.qscale = qscale;
 	handles.robot = robot;
 	
 	%find figure to put advTeach panel in
@@ -105,12 +105,12 @@ function advTeach(robot, varargin)
 				'String', sprintf('%c', xyzNames(1, j)));
 			
 			% slider itself
-			q(j) = max( qlim(j,1), min( qlim(j,2), q(j) ) ); % clip to range
+			xyzLims = [[-1.5 -1.5 -0.561]; [1.5 1.5 0.561]];
 			handles.slider(j) = uicontrol(panel, 'Style', 'slider', ...
 				'Units', 'normalized', ...
 				'Position', [0.15 height*(n - j + 2) 0.65 height], ...
-				'Min', qlim(j,1), ...
-				'Max', qlim(j,2), ...
+				'Min', xyzLims(1, j), ...
+				'Max', xyzLims(2, j), ...
 				'Value', xyz(j, 1), ...
 				'Tag', sprintf('Slider%c', xyzNames(1, j)));
 			
@@ -322,15 +322,7 @@ function advTeach(robot, varargin)
 end
 %% advTeach Callback
 function advTeach_callback(src, name, j, handles)
-    switch get(src, 'Style')
-		case 'slider'
-			newval = get(src, 'Value');
-			set(handles.edit(j), 'String', num2str(newval, 3));
-		case 'edit'
-			newval = str2double(get(src, 'String'));
-			set(handles.slider(j), 'Value', newval);
-	end
-	
+    qscale = 180/pi;
 	%find all graphical objects tagged with robot name
 	h = findobj('Tag', name);
 	
@@ -349,6 +341,14 @@ function advTeach_callback(src, name, j, handles)
 	
 	%set the goalXYZ to the current coordinates with the new coordinate changes
 	if j < 4
+		switch get(src, 'Style')
+			case 'slider'
+				newval = get(src, 'Value');
+				set(handles.edit(j), 'String', num2str(newval, 3));
+			case 'edit'
+				newval = str2double(get(src, 'String'));
+				set(handles.slider(j), 'Value', newval);
+		end
 		goalXYZ = currentXYZ;
 		goalXYZ(j, 1) = newval;
 		goalTr = transl(goalXYZ);
@@ -357,9 +357,26 @@ function advTeach_callback(src, name, j, handles)
 		handles.robot.animateRobotMovement(qMatrix, handles.robot,  0, 0, 0, 0);
 		info.q = goalJoints;
 		set(h(1), 'UserData', info);
+		nQ = size(goalJoints);
+		nQ = nQ(1, 2);
+		goalJoints
+		for i = 1:nQ
+			set(handles.slider(i+3), 'Value', goalJoints(1, i));
+			set(handles.edit(i+3), 'String', num2str(goalJoints(1, i) * qscale, 3));
+		end
+		
+			
 	end
 	
 	if j > 4
+		switch get(src, 'Style')
+			case 'slider'
+				newval = get(src, 'Value');
+				set(handles.edit(j), 'String', num2str(newval * qscale, 3));
+			case 'edit'
+				newval = str2double(get(src, 'String'));
+				set(handles.slider(j), 'Value', newval / qscale);
+		end
 		info.q(j - 3) = newval;
 		set(h(1), 'UserData', info);
 		animate(handles.robot.model, info.q);
