@@ -365,6 +365,7 @@ function advTeach_callback(src, name, j, handles)
 		animate(handles.robot.model, info.q);
 	end
 	
+	T6 = robot.model.fkine(info.q);
 	% convert orientation to desired format
 	switch handles.orientation
 		case 'approach'
