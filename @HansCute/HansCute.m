@@ -79,12 +79,12 @@ classdef HansCute < handle
 			numSteps = numSteps(1);
 			for i = 1:numSteps
 				drawnow()
-				stop_state = str2double(gui.EMERGENCYSTOPSwitch.Value);
-				if stop_state == 1
-					break;
-					stopAnimating(q, robot, isHolding, prop, effToPropTr);
-					return;
-				end
+% 				stop_state = str2double(gui.EMERGENCYSTOPSwitch.Value);
+% 				if stop_state == 1
+% 					break;
+% 					stopAnimating(q, robot, isHolding, prop, effToPropTr);
+% 					return;
+% 				end 
 				animate(robot.model, qMatrix(i, :));
 				if isHolding == true
 					prop.updatePos(robot.model.fkine(qMatrix(i, :)) * effToPropTr);
@@ -121,17 +121,17 @@ classdef HansCute < handle
 				diffTransform = HomInvert(currentTransform) * goalTransform;
 				coords = transl(goalTransform)-transl(currentTransform);
 				coords = transpose(coords);
-                re = t2r(goalTransform)*t2r(currentTransform)';
-                rpy = tr2rpy(r2t(re));
+				re = t2r(goalTransform)*t2r(currentTransform)';
+				rpy = tr2rpy(r2t(re));
 				endEffectorVelocities = [coords rpy];
 				endEffectorVelocities = transpose(endEffectorVelocities);
 				w = JointsTools.getWeightedMatrix(q, qMax, qMin, qVelocities, ones(1,7));
 				j = self.model.jacob0(q);
 				qVelocities = JointsTools.getJointVelocities(j, endEffectorVelocities, w);
 				maxVelocity = max(qVelocities);
-                x = qVelocities / maxVelocity;
-                qVelocities = x * self.maxAllowedVelocity;
-                q = q + transpose(qVelocities);
+				x = qVelocities / maxVelocity;
+				qVelocities = x * self.maxAllowedVelocity;
+				q = q + transpose(qVelocities);
 				qMatrix(i, :) = q;
 				i = i + 1;
 				%stop loop when end effector is in acceptable distance of goal
@@ -141,9 +141,9 @@ classdef HansCute < handle
 				end
 				if i > 500
 					break
-                end
-%                 self.model.animate(q);
-%                 drawnow();
+				end
+				%                 self.model.animate(q);
+				%                 drawnow();
 			end
 		end
 		
@@ -164,4 +164,3 @@ classdef HansCute < handle
 		end
 	end
 end
-
