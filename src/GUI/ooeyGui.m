@@ -1,4 +1,4 @@
-function ooeyGui(workbench)
+function ooeyGUI(workbench)
     f = findobj(gca, 'Tag', workbench.robot.model.name);
 	if isempty(f)
 		f = findobj(0, 'Tag', workbench.robot.model.name);
@@ -49,6 +49,8 @@ function ooeyGui(workbench)
 	handles.emergencyStop = uicontrol(panel, 'Style', 'pushbutton', ...
 		'Units', 'normalized', ...
 		'String', '<html>EMERGENCY<br />STOP</html>', ...
+		'BackgroundColor', 'red', ...
+		'FontSize', 13, ...
 		'Position', [0.12 0.4 0.3 0.3]);
 
 	%Darkness of toast slider
@@ -112,4 +114,14 @@ function quit_callback(robot, handles)
     set(handles.fig, 'ResizeFcn', '');
     delete(handles.panel);
     set(handles.curax, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1])
+end
+
+%callback to resize
+function resize_callback(handles)
+   fig = gcbo;
+   fs = get(fig, 'Position');
+   ps = get(handles.panel, 'Position');
+   set(handles.curax, 'Units', 'normalized', ...
+	   'OuterPosition', [ps(3) 0 fs(3)-ps(3) fs(4)]);
+   set(handles.panel, 'Position', [1 fs(4)-ps(4) ps(3:4)]);
 end

@@ -62,7 +62,7 @@ classdef Shmerkbench < handle
 			
 			self.stopState = 0;
 			
-			ooeyGui(self);
+			ooeyGUI(self);
 		end
 		%% Main Function
 		%Used to run demonstration

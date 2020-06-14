@@ -355,7 +355,7 @@ function advTeach_callback(src, name, j, handles)
 		goalTr = transl(goalXYZ);
 		goalJoints = handles.robot.model.ikcon(goalTr, currentJoints);
 		qMatrix = handles.robot.getPoseQMatrix(currentJoints, goalJoints, 2);
-		handles.robot.animateRobotMovement(qMatrix, handles.robot,  0, 0, 0, 0);
+		handles.robot.animateRobotMovement(qMatrix, handles.robot,  0, 0, 0);
 		info.q = goalJoints;
 		set(h(1), 'UserData', info);
 		nQ = size(goalJoints);
