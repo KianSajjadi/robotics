@@ -367,7 +367,7 @@ function advTeach_callback(src, name, j, handles)
 			
 	end
 	
-	if j > 4
+	if j >= 4
 		switch get(src, 'Style')
 			case 'slider'
 				newval = get(src, 'Value');
