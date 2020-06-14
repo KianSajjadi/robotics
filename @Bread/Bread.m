@@ -31,8 +31,8 @@ classdef Bread < handle
 		end
 		
 		function updatePos(self, breadTr)
-			for j=1:self.numPoints
-				self.bread_h.Vertices(j,:)=transl(breadTr*transl(self.points(j,:)))';
+			for j = 1:self.numPoints
+				self.bread_h.Vertices(j,:) = transl(breadTr*transl(self.points(j,:)))';
 			end
 		end
 		

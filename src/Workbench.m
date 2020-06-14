@@ -1,5 +1,5 @@
-pq = q
-q = robot.model.ikcon(transl(x,y,z) * rpy2tr(r,p,y))
+pq = q;
+q = robot.model.ikcon(transl(x,y,z) * rpy2tr(r,p,y));
 robot.model.animate(q, pq);
 drawnow();
 

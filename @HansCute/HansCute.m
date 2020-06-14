@@ -9,6 +9,8 @@ classdef HansCute < handle
 		useGripper = false;
 		
 		maxAllowedVelocity = 0.6 / 30; %taken from hanscute recommended maxspeed in the sourcecode
+		
+		stopState;
 	end
 	
 	methods%% Class for HansCute robot simulation
@@ -16,6 +18,7 @@ classdef HansCute < handle
 			self.GetHansCuteRobot();
 			% robot =
 			self.PlotAndColourRobot();%robot,workspace);
+			
 		end
 		
 		%% GetHansCuteRobot
@@ -74,23 +77,29 @@ classdef HansCute < handle
 		end
 		
 		%% animateRobotMovement
-		function animateRobotMovement(self, qMatrix, robot, isHolding, prop, effToPropTr, gui)
+		function animateRobotMovement(self, qMatrix, robot, isHolding, prop, effToPropTr)
 			numSteps = size(qMatrix);
 			numSteps = numSteps(1);
 			for i = 1:numSteps
 				drawnow()
-% 				stop_state = str2double(gui.EMERGENCYSTOPSwitch.Value);
-% 				if stop_state == 1
-% 					break;
-% 					stopAnimating(q, robot, isHolding, prop, effToPropTr);
-% 					return;
-% 				end
+				
+				%emergency stop functionality
+				stopState = self.stopState;
+				if stopState == 1
+					break;
+					stopAnimating(q, robot, isHolding, prop, effToPropTr);
+					return;
+				end
+				
+				%animate robot motion
 				animate(robot.model, qMatrix(i, :));
+				%animate prop motion
 				if isHolding == true
 					prop.updatePos(robot.model.fkine(qMatrix(i, :)) * effToPropTr);
 				end
 			end
 		end
+		
 		%% stopAnimating
 		function stopAnimating(self, qMatrix, robot, isHolding, prop, effToPropTr)
 			robot.model.animate(q);
@@ -122,7 +131,7 @@ classdef HansCute < handle
 				coords = transl(goalTransform)-transl(currentTransform);
 				coords = transpose(coords);
                 if max(abs(coords)) > 0.004
-                    coords = coords * 0.004/max(abs(coords))
+                    coords = coords * 0.004/max(abs(coords));
                 end
                 re = t2r(goalTransform)*t2r(currentTransform)';
                 rpy = tr2rpy(r2t(re));

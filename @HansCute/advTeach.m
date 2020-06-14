@@ -332,7 +332,8 @@ function advTeach_callback(src, name, j, handles)
 	end
 	
 	%Find current coordinates
-    currentXYZ = [str2double(get(handles.t6.t(1), 'String')) str2double(get(handles.t6.t(2), 'String')) str2double(get(handles.t6.t(3), 'String'))]';
+	currentXYZ  = [get(handles.slider(1), 'Value'), get(handles.slider(2), 'Value'), get(handles.slider(3), 'Value')];
+    %currentXYZ = [str2double(get(handles.t6.t(1), 'String')) str2double(get(handles.t6.t(2), 'String')) str2double(get(handles.t6.t(3), 'String'))]';
 	info = get(h(1), 'UserData');
 	%Find current Joint angles
 	currentJoints = info.q;
@@ -350,21 +351,19 @@ function advTeach_callback(src, name, j, handles)
 				set(handles.slider(j), 'Value', newval);
 		end
 		goalXYZ = currentXYZ;
-		goalXYZ(j, 1) = newval;
+		goalXYZ(1, j) = newval;
 		goalTr = transl(goalXYZ);
 		goalJoints = handles.robot.model.ikcon(goalTr, currentJoints);
-		qMatrix = handles.robot.getPoseQMatrix(currentJoints, goalJoints, 5);
+		qMatrix = handles.robot.getPoseQMatrix(currentJoints, goalJoints, 2);
 		handles.robot.animateRobotMovement(qMatrix, handles.robot,  0, 0, 0, 0);
 		info.q = goalJoints;
 		set(h(1), 'UserData', info);
 		nQ = size(goalJoints);
 		nQ = nQ(1, 2);
-		goalJoints
 		for i = 1:nQ
 			set(handles.slider(i+3), 'Value', goalJoints(1, i));
 			set(handles.edit(i+3), 'String', num2str(goalJoints(1, i) * qscale, 3));
 		end
-		
 			
 	end
 	
@@ -397,7 +396,10 @@ function advTeach_callback(src, name, j, handles)
     for i = 1:3
         set(handles.t6.t(i), 'String', sprintf('%.3f', T6(i, 4)));
         set(handles.t6.r(i), 'String', sprintf('%.3f', orient(i)));
-    end
+% 		posVal = str2double(get(handles.t6.t(i), 'String'));
+% 		set(handles.slider(i), 'Value', posVal);
+% 		set(handles.edit(i), 'String', num2str(posVal));
+	end
     
     if ~isempty(handles.callback)
         handles.callback(handles.robot, info.q);
